@@ -1,9 +1,10 @@
 # Screendime API
 
-A focused Elixir + Phoenix backend for a digital discipline tool that penalizes users when they visit blocked websites — using their own virtual currency as stakes.  
-This backend serves as the core engine for a browser extension.
+A focused Elixir + Phoenix backend for a digital discipline tool that penalizes users when they visit blocked websites — using their own virtual currency as stakes. This backend serves as the core engine for a browser extension.
+
 
 ---
+
 
 ## Overview
 
@@ -14,6 +15,7 @@ The Screendime API enforces digital self-discipline through the following flow:
 3. If the visit violates a rule, the API deducts a penalty from the user’s balance.
 
 ---
+
 
 ## Key API Endpoints
 
@@ -59,6 +61,7 @@ The penalty engine handles:
 
 ---
 
+
 ## Tech Stack
 
 - **Elixir & Phoenix Framework** — Core API logic and HTTP routing
@@ -68,6 +71,7 @@ The penalty engine handles:
   Simply adjust your `config/dev.exs` and `config/test.exs` database settings if you prefer SQLite
 
 ---
+
 
 ## 🛠️ Run Locally
 
@@ -79,6 +83,7 @@ The penalty engine handles:
 - `curl` and `jq` (for testing scripts)
 
 ---
+
 
 ### **Setup**
 
@@ -107,7 +112,9 @@ mix phx.server
 
 The API should now be running at **[http://localhost:4000](http://localhost:4000)**.
 
+
 ---
+
 
 ## Testing the Core Workflow
 
