@@ -21,7 +21,7 @@ defmodule ScreendimeApi.MixProject do
   def application do
     [
       mod: {ScreendimeApi.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :tzdata]
     ]
   end
 
@@ -40,7 +40,6 @@ defmodule ScreendimeApi.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:tzdata, "~> 1.1"},
       {:phoenix, "~> 1.8.1"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.13"},
@@ -66,7 +65,10 @@ defmodule ScreendimeApi.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:tzdata, "~> 1.1"},
+      {:wildcard, "~> 0.2.1"}
+
     ]
   end
 

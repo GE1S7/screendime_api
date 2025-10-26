@@ -26,6 +26,8 @@ defmodule ScreendimeApiWeb.Router do
     resources "/users", UserController, except: [:new, :edit] do
       # nested - each user owns a blacklist of url patterns
       resources "/blocked-patterns", BlockedPatternController, except: [:new, :edit]
+      # nested - visits made by a given user
+      resources "/visits", VisitController, except: [:new, :edit]
     end
   end
 

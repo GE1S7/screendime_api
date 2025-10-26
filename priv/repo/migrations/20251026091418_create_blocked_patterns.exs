@@ -9,6 +9,6 @@ defmodule ScreendimeApi.Repo.Migrations.CreateBlockedPatterns do
       timestamps(type: :utc_datetime)
     end
 
-    create index(:blocked_patterns, [:user_id])
+    create index(:blocked_patternsw, [:user_id])
   end
 end
