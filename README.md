@@ -1,19 +1,29 @@
 # Screendime API
 
-A focused **Elixir + Phoenix** backend for a _digital discipline tool_ that penalizes users when they visit blocked websites — using their own virtual currency as stakes.  
-This backend serves as the **core engine** for a browser extension.
+A focused Elixir + Phoenix backend for a digital discipline tool that penalizes users when they visit blocked websites — using their own virtual currency as stakes.  
+This backend serves as the core engine for a browser extension.
 
 ---
 
 ## Overview
 
-The **Screendime API** enforces digital self-discipline through the following flow:
+The Screendime API enforces digital self-discipline through the following flow:
 
 1. A browser extension notifies the API when a user visits a website.
 2. The API checks if the URL matches any of the user’s blocked patterns.
 3. If the visit violates a rule, the API deducts a penalty from the user’s balance.
 
 ---
+
+## Key API Endpoints
+
+| Method   | Endpoint                               | Description                                                   |
+| -------- | -------------------------------------- | ------------------------------------------------------------- |
+| **POST** | `/api/users`                           | Create a new user with a default balance and stake.           |
+| **POST** | `/api/users/:user_id/blocked-patterns` | Add a blocked URL pattern (e.g., `youtube.com/*`).            |
+| **POST** | `/api/users/:user_id/visits`           | Core endpoint — logs a visit and triggers the penalty engine. |
+| **GET**  | `/api/users/:id`                       | Retrieve user details, including balance and stake.           |
+
 
 ## Core Functionality: The Penalty Engine
 
@@ -62,8 +72,6 @@ The penalty engine handles:
 ## 🛠️ Run Locally
 
 ### **Prerequisites**
-
-You’ll need the following installed:
 
 - Elixir & Erlang
 - SQLite3
@@ -126,15 +134,3 @@ Each script demonstrates a specific step in the user flow:
 
 03: Visit an allowed URL (no penalty applied).
 
----
-
-## Key API Endpoints
-
-| Method   | Endpoint                               | Description                                                   |
-| -------- | -------------------------------------- | ------------------------------------------------------------- |
-| **POST** | `/api/users`                           | Create a new user with a default balance and stake.           |
-| **POST** | `/api/users/:user_id/blocked-patterns` | Add a blocked URL pattern (e.g., `youtube.com/*`).            |
-| **POST** | `/api/users/:user_id/visits`           | Core endpoint — logs a visit and triggers the penalty engine. |
-| **GET**  | `/api/users/:id`                       | Retrieve user details, including balance and stake.           |
-
-Use mix phx.routes to view the full list of available routes.
