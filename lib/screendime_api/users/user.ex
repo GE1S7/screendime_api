@@ -4,7 +4,7 @@ defmodule ScreendimeApi.Users.User do
 
   schema "users" do
     field :balance, :integer
-    field :stake, :integer, default: 1
+    field :stake, :integer
 
     # internal fields
     field :joined, :utc_datetime
