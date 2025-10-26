@@ -27,7 +27,7 @@ defmodule ScreendimeApi.Users.User do
 
   def calculate_balance(cs) do
       stake = get_change(cs, :stake)
-      if stake do
+      if stake > 0 do
         put_change(cs, :balance, stake * 30)
       else
         add_error(cs, :stake, "empty")
