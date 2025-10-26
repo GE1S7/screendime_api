@@ -21,7 +21,7 @@ defmodule ScreendimeApi.MixProject do
   def application do
     [
       mod: {ScreendimeApi.Application, []},
-      extra_applications: [:logger, :runtime_tools, :tzdata]
+      extra_applications: [:logger, :runtime_tools, :tzdata, :wildcard]
     ]
   end
 
@@ -67,7 +67,8 @@ defmodule ScreendimeApi.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:tzdata, "~> 1.1"},
-      {:wildcard, "~> 0.2.1"}
+      {:wildcard, "~> 0.2.1"},
+      {:timex, "~> 3.7.13"}
 
     ]
   end

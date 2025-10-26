@@ -4,9 +4,14 @@ defmodule ScreendimeApi.Blocking do
   """
 
   import Ecto.Query, warn: false
+
   alias ScreendimeApi.Repo
 
   alias ScreendimeApi.Blocking.BlockedPattern
+
+  alias ScreendimeApi.Users.User
+  require Wildcard
+
 
   @doc """
   Returns the list of blocked_patterns.
@@ -102,5 +107,18 @@ defmodule ScreendimeApi.Blocking do
   """
   def change_blocked_pattern(%BlockedPattern{} = blocked_pattern, attrs \\ %{}) do
     BlockedPattern.changeset(blocked_pattern, attrs)
+  end
+
+ def is_url_blocked?(%User{} = user, url_to_check) do
+    clean_url =
+      url_to_check
+      |> String.split("://")
+      |> List.last()
+
+    patterns = user.blocked_patterns
+
+    Enum.any?(patterns, fn pattern ->
+      Wildcard.matches?(clean_url, pattern.url)
+    end)
   end
 end

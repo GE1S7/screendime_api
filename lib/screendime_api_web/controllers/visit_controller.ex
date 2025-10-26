@@ -11,16 +11,86 @@ defmodule ScreendimeApiWeb.VisitController do
     render(conn, :index, visits: visits)
   end
 
-def create(conn, %{"user_id" => user_id, "visit" => visit_params}) do
-   params_with_user = Map.put(visit_params, "user_id", user_id)
+  def create(conn, %{"user_id" => user_id, "visit" => visit_params}) do
+    with {:ok, user} <- fetch_user_with_patterns(user_id),
+         {:ok, url, timezone} <- get_visit_details(visit_params),
+         :blocked <- check_if_blocked(user, url),
+         :eligible <- check_penalty_eligibility(user, timezone) do
 
-    with {:ok, %Visit{} = visit} <- Tracking.create_visit(params_with_user) do
+      updated_user = apply_penalty(user)
+
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/users/#{user_id}/visits/#{visit}")
-      |> render(:show, visit: visit)
+      |> put_status(:ok)
+      |> json(%{
+        status: "penalized",
+        message: "Penalty applied for visiting a blocked site.",
+        new_balance: updated_user.balance
+      })
+    else
+      {:error, reason} ->
+        conn |> put_status(:bad_request) |> json(%{error: reason})
+
+      :not_blocked ->
+        conn |> put_status(:ok) |> json(%{status: "allowed", message: "URL is not on the blocklist."})
+
+      {:skipped, reason} ->
+        conn |> put_status(:ok) |> json(%{status: "blocked_penalty_skipped", reason: reason})
     end
   end
+
+
+defp fetch_user_with_patterns(user_id) do
+  user =
+    ScreendimeApi.Repo.get(ScreendimeApi.Users.User, user_id)
+    |> ScreendimeApi.Repo.preload(:blocked_patterns)
+
+  if user, do: {:ok, user}, else: {:error, "User not found"}
+end
+
+defp get_visit_details(params) do
+  url = Map.get(params, "url")
+  timezone = Map.get(params, "timezone")
+
+  if url && timezone, do: {:ok, url, timezone}, else: {:error, "Missing url or timezone in request body"}
+end
+
+defp check_if_blocked(user, url) do
+  if ScreendimeApi.Blocking.is_url_blocked?(user, url), do: :blocked, else: :not_blocked
+end
+
+defp check_penalty_eligibility(user, timezone) do
+  cond do
+    user.balance < user.stake ->
+      {:skipped, "insufficient_balance"}
+
+    user_fined_today?(user, timezone) ->
+      {:skipped, "already_fined_today"}
+
+    true ->
+      :eligible
+  end
+end
+
+defp user_fined_today?(user, visit_timezone) do
+  case user.last_penalty do
+    nil ->
+      false
+    last_penalty_utc ->
+      last_penalty_local = Timex.to_datetime(last_penalty_utc, visit_timezone)
+      start_of_today_local = Timex.today(visit_timezone)
+      Timex.compare(last_penalty_local, start_of_today_local) >= 0
+  end
+end
+
+defp apply_penalty(user) do
+  user
+  |> Ecto.Changeset.change(%{
+    balance: user.balance - user.stake,
+    last_penalty: DateTime.utc_now() |> DateTime.truncate(:second)
+  })
+  |> ScreendimeApi.Repo.update!()
+end
+
 
  def show(conn, %{"user_id" => user_id, "id" => id}) do
     visit = Tracking.get_visit_for_user!(user_id, id)
