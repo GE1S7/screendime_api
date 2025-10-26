@@ -1,0 +1,39 @@
+#!/bin/bash
+set -e
+
+# --- Configuration ---
+BASE_URL="http://localhost:4000/api"
+
+# --- Colors ---
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YELLOW}--- STEP 3: Testing a visit to a BLOCKED site... ---${NC}"
+
+# Read the user ID saved by the previous script
+USER_ID=$(cat .user_id)
+
+echo "Using User ID: $USER_ID"
+
+# Send the request to log a visit to a site that should be blocked
+RESPONSE=$(curl -s -X POST "$BASE_URL/users/$USER_ID/visits" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "visit": {
+      "url": "https://www.youtube.com/watch?v=somevideo",
+      "timezone": "America/New_York"
+    }
+  }')
+
+# Check the response status with jq
+STATUS=$(echo "$RESPONSE" | jq -r '.status')
+
+if [ "$STATUS" == "penalized" ]; then
+  echo -e "${GREEN}✅ SUCCESS: Penalty was correctly applied!${NC}"
+  echo "Response: $RESPONSE"
+else
+  echo -e "${RED}❌ FAILURE: Expected 'penalized' status, but got '$STATUS'.${NC}"
+  echo "Response: $RESPONSE"
+  exit 1
+fi
