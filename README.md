@@ -122,10 +122,12 @@ Run them in order:
 ```
 
 bash
-Copy code
+```
 ./01_create_user_and_pattern.sh
 ./02_test_penalty.sh
 ./03_test_allowed.sh
+```
+
 Each script demonstrates a specific step in the user flow:
 
 01: Create a user and register blocked URL patterns.
