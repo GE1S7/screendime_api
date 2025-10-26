@@ -125,11 +125,7 @@ Make the test scripts executable:
 
 ```bash
 chmod +x 0*.sh
-Run them in order:
-```
 
-bash
-```
 ./01_create_user_and_pattern.sh
 ./02_test_penalty.sh
 ./03_test_allowed.sh
