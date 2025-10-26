@@ -11,6 +11,8 @@ defmodule ScreendimeApi.Users.User do
     field :recharges_on, :utc_datetime
     field :last_penalty, :utc_datetime
 
+    has_many :blocked_patterns, ScreendimeApi.Blocking.BlockedPattern
+
     timestamps(type: :utc_datetime)
   end
 

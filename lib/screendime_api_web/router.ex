@@ -23,7 +23,10 @@ defmodule ScreendimeApiWeb.Router do
   scope "/api/", ScreendimeApiWeb do
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit] do
+      # nested - each user owns a blacklist of url patterns
+      resources "/blocked-patterns", BlockedPatternController, except: [:new, :edit]
+    end
   end
 
   # Other scopes may use custom stacks.
