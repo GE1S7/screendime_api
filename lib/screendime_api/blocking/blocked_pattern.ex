@@ -18,4 +18,18 @@ defmodule ScreendimeApi.Blocking.BlockedPattern do
     |> validate_required([:user_id, :url])
     |> foreign_key_constraint(:user_id)
   end
+
+  defp validate_pattern(cs) do
+    if cs.valid? do
+      pattern = get_change(cs, :url)
+      if pattern do
+        r = ~r/^(\*\.)?[a-z0-9*]([a-z0-9*\-]*[a-z0-9*])?(\.([a-z0-9*]([a-z0-9*\-]*[a-z0-9*])?))+(\/.*)?$/
+        Regex.match?(r, pattern)
+      end
+    else
+      cs
+
+    end
+
+  end
 end
