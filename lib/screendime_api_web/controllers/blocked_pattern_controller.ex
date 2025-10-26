@@ -11,7 +11,7 @@ defmodule ScreendimeApiWeb.BlockedPatternController do
     render(conn, :index, blocked_patterns: blocked_patterns)
   end
 
-  def create(conn, %{"user_id" => user_id, "blocked-pattern" => params}) do
+  def create(conn, %{"user_id" => user_id, "blocked_pattern" => params}) do
     params = Map.put(params, "user_id", user_id)
 
     with {:ok, %BlockedPattern{} = blocked_pattern} <- Blocking.create_blocked_pattern(params) do
@@ -30,7 +30,7 @@ defmodule ScreendimeApiWeb.BlockedPatternController do
     end
   end
 
-  def update(conn, %{"user_id" => user_id, "id" => id, "blocked-pattern" => params}) do
+  def update(conn, %{"user_id" => user_id, "id" => id, "blocked_pattern" => params}) do
     with {:ok, blocked_pattern} = get_user_pattern(user_id, id),
          {:ok, updated} <- Blocking.update_blocked_pattern(blocked_pattern, params) do
       render(conn, :show, blocked_pattern: updated)
