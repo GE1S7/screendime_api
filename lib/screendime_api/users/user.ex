@@ -26,14 +26,13 @@ defmodule ScreendimeApi.Users.User do
   end
 
   def calculate_balance(cs) do
-    if cs.valid? do
       stake = get_change(cs, :stake)
       if stake do
         put_change(cs, :balance, stake * 30)
+      else
+        add_error(cs, :stake, "empty")
       end
-    else
-      cs
-    end
+
   end
 
   def set_timestamps(cs) do
