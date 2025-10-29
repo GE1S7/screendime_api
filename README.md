@@ -32,10 +32,53 @@ The Screendime API enforces digital self-discipline through the following flow:
 The API is intentionally designed around a single, atomic request–response cycle.  
 All logic (validation, rule-checking, timezone-aware penalty application) occurs in one request.
 
+**Example: Create user setting daily stake to 5.**
+```bash
+curl -X POST http://localhost:4000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "user": {
+      "stake": 5
+    }
+  }'
+```
+Expected response (balance = 5 × 30 = 150):
+```
+{
+  "data": {
+    "id": 1,
+    "balance": 150,
+    "joined": "2025-10-29T18:00:00Z",
+    "last_penalty": null,
+    "recharges_on": "2025-11-28T18:00:00Z",
+    "stake": 5
+  }
+}
+```
+**Example: Add blocked pattern for User ID 1**
+```bash
+curl -X POST http://localhost:4000/api/users/1/blocked-patterns \
+  -H "Content-Type: application/json" \
+  -d '{
+    "blocked_pattern": {
+      "user_id": 1,
+      "url": "youtube.com/*"
+    }
+  }'
+```
+Expected response:
+```
+{
+  "data": {
+    "id": 1,
+    "pattern": "youtube.com/*"
+  }
+}
+```
+
 **Example: A user visits a blocked site and is penalized.**
 
 ```bash
-# 1. The extension sends the visited URL and timezone.
 curl -X POST http://localhost:4000/api/users/1/visits \
   -H "Content-Type: application/json" \
   -d '{
@@ -44,8 +87,9 @@ curl -X POST http://localhost:4000/api/users/1/visits \
       "timezone": "America/New_York"
     }
   }'
-
-# 2. The server processes and responds.
+```
+Expected response:
+```
 {
   "status": "penalized",
   "message": "Penalty applied for visiting a blocked site.",
@@ -57,7 +101,7 @@ The penalty engine handles:
 
 - Duplicate penalties on the same day (skipped in local time)
 - Insufficient user balances
-- Timezone-based rule evaluation
+- Timezone-based rule evaluation (user gets penalized at most once per day based on their timezone)
 
 ---
 
