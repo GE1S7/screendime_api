@@ -114,6 +114,8 @@ defmodule ScreendimeApi.Blocking do
       url_to_check
       |> String.split("://")
       |> List.last()
+      |> String.split("www")
+      |> List.last()
 
     patterns = user.blocked_patterns
 

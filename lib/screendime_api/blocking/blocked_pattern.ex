@@ -23,11 +23,10 @@ defmodule ScreendimeApi.Blocking.BlockedPattern do
   defp validate_pattern(cs) do
       pattern = get_change(cs, :url)
       if pattern do
-        r = ~r/^(\*\.)?[a-z0-9*]([a-z0-9*\-]*[a-z0-9*])?(\.([a-z0-9*]([a-z0-9*\-]*[a-z0-9*])?))+(\/.*)?$/
-        if Regex.match?(r, pattern) do
-          cs
+        if String.contains?(pattern, "://") || String.contains?(pattern,"www") do
+          add_error(cs, :url, "Invalid. Url pattern should not contain a protocol nor www")
         else
-          add_error(cs, :url, "invalid")
+          cs
         end
       else
         add_error(cs, :url, "empty")
